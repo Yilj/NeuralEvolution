@@ -35,15 +35,5 @@ function draw() {
 		}
 	}
 
-	let x = Math.sqrt(frameCount) * 10;
-	let y = height - map(pop.organisms[0].error, 0, 0.01, 0, height);
-
-	line(x, y, px, py);
-
-	px = x;
-	py = y;
-
-
-
 	console.log(pop.organisms[0].error);
 }

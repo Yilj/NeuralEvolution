@@ -59,7 +59,7 @@ class Population {
 			}
 		}
 
-		// CROSSOVER NEW CHILREN
+		// CROSSOVER NEW CHILDREN
 		// Keep the first quarter of organisms
 		let keep = this.organisms.length / 4;
 		// Discard last quarter

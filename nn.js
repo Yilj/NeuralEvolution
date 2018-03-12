@@ -48,7 +48,7 @@ class NeuralNetwork {
 			mutationRate: 0.01,
 			mutationRateMin: 0,
 			mutationRateMax: 0.1,
-			mutationRate$: false,
+			mutationRate$: true,
 			// Accumulator the activation function get's mulitplyed with
 			accumulator: 1,
 			accumulatorMin: 0,
@@ -141,9 +141,11 @@ class NeuralNetwork {
 		* Mutate NeuralNetwork's weights and biases
 		* @param {number} rate Mutation probabilty between 0(none) and 1(all)
 	*/
-	mutate() {
+	mutate(rate) {
+		if (rate === undefined) rate = this._settings.mutationRate;
+
 		// Return new random value between -1 and 1 or val using rate
-		const mutate = val => this._settings.mutationRate > Math.random() ? val + math.random(-1, 1) : val;
+		const mutate = val => rate > Math.random() ? val + math.random(-1, 1) : val;
 
 		// Retrun random _function
 		const random_function = (min, max) => {
@@ -158,22 +160,22 @@ class NeuralNetwork {
 		}
 
 		// Mutate mutationRate
-		if (this._settings.mutationRate$ && this._settings.mutationRate > Math.random()) {
+		if (this._settings.mutationRate$ && rate > Math.random()) {
 			this._settings.mutationRate = math.random(this._settings.mutationRateMin, this._settings.mutationRateMax);
 		}
 
 		// Mutate accumulator
-		if (this._settings.accumulator$ && this._settings.mutationRate > Math.random()) {
+		if (this._settings.accumulator$ && rate > Math.random()) {
 			this._settings.accumulator = Math.floor(math.random(this._settings.accumulatorMin, this._settings.accumulatorMax));
 		}
 
 		// Mutate hFunction
-		if (this._settings.hFunction$ && this._settings.mutationRate > Math.random()) {
+		if (this._settings.hFunction$ && rate > Math.random()) {
 			this._settings.hFunction = random_function(this._settings.hFunctionMin, this._settings.hFunctionMax);
 		}
 
 		// Mutate oFunction
-		if (this._settings.oFunction$ && this._settings.mutationRate > Math.random()) {
+		if (this._settings.oFunction$ && rate > Math.random()) {
 			this._settings.oFunction = random_function(this._settings.oFunctionMin, this._settings.oFunctionMax);
 		}
 	}
@@ -186,36 +188,31 @@ class NeuralNetwork {
 		* @static
 	*/
 	static crossOver(a, b) {
-		// Make new NeuralNetwork as copy from a
+		// Deep copy a
 		let nn = a.copy();
 
 		// Crossover matrix a and b
-		const cross = (a, b) => {
-			// Initialize new empty array of same length as 'a'
-			let newArray = new Array(a.length);
-			// Loop over the new array
+		const cross = (a, b, nn) => {
+			nn = math.clone(a);
+			// Loop over the array
 			for (let i = 0; i < a.length; i++) {
 				// If 'a' is a matrix
 				if (a[0].constructor === Array) {
-					// Turn newArray into matrix with same dimensions as a
-					newArray[i] = new Array(a[i].length);
 					for (let j = 0; j < a[i].length; j++) {
 						// Copy value of a or of b by random
-						newArray[i][j] = (0.5 > Math.random() ? a[i][j] : b[i][j]);
+						nn[i][j] = (0.5 > Math.random() ? a[i][j] : b[i][j]);
 					}
 				} else {
-					newArray[i] = (0.5 > Math.random() ? a[i] : b[i]);
+					nn[i] = (0.5 > Math.random() ? a[i] : b[i]);
 				}
 			}
-			// Return the new matrix
-			return newArray;
 		}
 
 		// Iterate over layers and ...
 		for (let i = 0; i < a.shape.length - 1; i++) {
 			// ... crossover all matrices
-			nn.biases[i] = cross(a.biases[i], b.biases[i]);
-			nn.weights[i] = cross(a.weights[i], b.weights[i]);
+			cross(a.biases[i], b.biases[i], nn.biases[i]);
+			cross(a.weights[i], b.weights[i], nn.weights[i]);
 		}
 
 		// Crossover accumulator, hFunction and oFunction
