@@ -139,13 +139,13 @@ class NeuralNetwork {
 
 	/**
 		* Mutate NeuralNetwork's weights and biases
-		* @param {number} rate Mutation probabilty between 0(none) and 1(all)
+		* @param {number} [rate] Mutation probabilty
 	*/
 	mutate(rate) {
 		if (rate === undefined) rate = this._settings.mutationRate;
 
 		// Return new random value between -1 and 1 or val using rate
-		const mutate = val => rate > Math.random() ? val + math.random(-1, 1) : val;
+		const mutate = val => rate > Math.random() ? math.random(-1, 1) : val;
 
 		// Retrun random _function
 		const random_function = (min, max) => {

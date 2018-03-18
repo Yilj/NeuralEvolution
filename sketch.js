@@ -9,6 +9,7 @@ function setup() {
 
 	let nn = new NeuralNetwork([2, 4, 8, 1]);
 	pop = new Population(nn, 400, 0.05);
+	noLoop();
 }
 
 function draw() {
